@@ -6,15 +6,19 @@ export default {
     mutations: {
         updatePosts(state, posts) {
             state.posts = posts
-            state.postsLoaded = true
+        },
+        toggleLoader(state, value) {
+            state.postsLoaded = value
         }
     },
     actions: {
         async fetchPosts({commit}, limit = 5) {
+            commit('toggleLoader', false)
             await fetch('https://jsonplaceholder.typicode.com/posts?_limit=' + limit)
                 .then(response => response.json())
                 .then(json => {
                     commit('updatePosts', json)
+                    commit('toggleLoader', true)
                 });
         }
     },
@@ -22,5 +26,8 @@ export default {
         allPosts(state) {
             return state.posts
         },
+        isLoaded(state) {
+            return state.postsLoaded
+        }
     }
 }
